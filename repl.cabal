@@ -29,6 +29,7 @@ library
       Helpers
       Lib
       Parser
+      PrettyPrinter
       Syntax
   other-modules:
       Paths_repl

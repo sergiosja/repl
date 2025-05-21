@@ -113,4 +113,4 @@ parseOperator = choice
 
 parseProgram :: Parser Program
 parseProgram =
-    Program <$> (whiteSpace *> many parseExpression <* eof)
+    Program <$> parseExpression

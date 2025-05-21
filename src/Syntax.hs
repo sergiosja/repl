@@ -2,7 +2,7 @@
 -- :(
 module Syntax (module Syntax) where 
 
-data Program = Program [Expression]
+data Program = Program Expression
     deriving (Show, Eq, Read, Ord)
 
 data Value =

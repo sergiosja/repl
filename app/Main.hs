@@ -1,17 +1,27 @@
 module Main (main) where
 
 import System.Environment (getArgs)
-import Text.Parsec
+import System.IO (hFlush, stdout)
+import Control.Monad (forever)
 import Parser (parseProgram)
+import Text.Parsec
 
 
 main :: IO ()
 main = do
-    args <- getArgs
-    case args of
-        [program] -> printAST program
-        _ -> putStrLn "Scusami ma, non ho capito. Provi di nuovo, per favore."
+    putStrLn "repl, version 0.0.1: https://github.com/sergiosja/repl  :? for help (not implemented)\n"
+    repl
 
+repl :: IO ()
+repl = forever $ do
+    putStr "σ "
+    hFlush stdout
+    line <- getLine
+    case parse parseProgram "" line of
+        Right p -> do
+            print p
+            putStrLn ""
+        Left err -> putStrLn $ "Parse error: " ++ show err
 
 printAST :: String -> IO ()
 printAST program = do

@@ -10,7 +10,7 @@ data Value =
     | Number Integer
     | Decimal Double
     | Boolean Bool
-    | List [Expression]
+    | Quote [Expression]
     deriving (Show, Eq, Read, Ord)
 
 data Expression =

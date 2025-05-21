@@ -11,7 +11,7 @@ lexer = Token.makeTokenParser emptyDef {
     -- Token.identStart = letter,
     -- Token.identLetter = alphaNum <|> char '\'',
     Token.reservedOpNames =
-        [ "(", ")", "+", "-", "*", "/", "\'"
+        [ "(", ")", "+", "-", "*", "/"
         , "<", ">", "==", "/=", ">=", "<="
         ],
     Token.reservedNames =
@@ -31,9 +31,6 @@ reservedOp = Token.reservedOp lexer
 whiteSpace :: Parser ()
 whiteSpace = Token.whiteSpace lexer
 
--- whiteSpace' :: Char -> Parser ()
--- whiteSpace' c = whiteSpace >> char c >> whiteSpace
-
 integer :: Parser Integer
 integer = Token.integer lexer
 
@@ -52,7 +49,7 @@ parseValue = choice
     , try parseDecimal
     , try parseNumber
     , try parseBoolean
-    , parseList
+    , parseQuote
     ]
 
 parseText :: Parser Value
@@ -68,9 +65,9 @@ parseBoolean :: Parser Value
 parseBoolean =
     Boolean <$> (reserved "true" *> pure True <|> reserved "false" *> pure False)
 
-parseList :: Parser Value
-parseList =
-    List <$> (reserved "'" *> reserved "(" *> parseExpression `sepBy` whiteSpace <* reserved ")")
+parseQuote :: Parser Value
+parseQuote =
+    Quote <$> (char '\'' *> char '(' *> parseExpression `sepBy` whiteSpace <* char ')')
 
 
 -- Expression
@@ -83,8 +80,8 @@ parseExpression = choice
 
 parseApply :: Parser Expression
 parseApply =
-    Apply <$> (reserved "(" *> parseOperator)
-          <*> (many parseExpression <* reserved ")")
+    Apply <$> (char '(' *> parseOperator)
+          <*> (many parseExpression <* char ')')
 
 parseConstant :: Parser Expression
 parseConstant = Constant <$> parseValue

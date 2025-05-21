@@ -1,9 +1,9 @@
 module Main (main) where
 
 import System.IO (hFlush, stdout)
-import Control.Monad (forever)
 import Text.Parsec
 
+import PrettyPrinter (showValue)
 import Parser (parseProgram)
 import Eval (eval)
 
@@ -16,7 +16,7 @@ repl = do
     loop
     where
         loop = do
-            putStr "\nσ "
+            putStr "\n> "
             hFlush stdout
             line <- getLine
             case line of
@@ -25,7 +25,7 @@ repl = do
                     case parse parseProgram "" line of
                         Right p ->
                             case eval p of
-                                Right result -> putStrLn $ show result
+                                Right result -> putStrLn $ showValue result
                                 Left err -> putStrLn $ "Eval error: " ++ show err
                         Left err -> putStrLn $ "Parse error: " ++ show err
                     loop

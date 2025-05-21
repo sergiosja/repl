@@ -5,24 +5,17 @@ module Syntax (module Syntax) where
 data Program = Program [Expression]
     deriving (Show, Eq, Read, Ord)
 
--- data FunctionDeclaration = Function String [String] [Expression]
---     deriving (Show, Eq, Read, Ord)
-
 data Value =
-      Nil
-    | Boolean Bool
+      Text String
     | Number Integer
     | Decimal Double
-    | Text String
+    | Boolean Bool
     | List [Value]
     deriving (Show, Eq, Read, Ord)
 
 data Expression =
       Constant Value
-    -- | Variable String
-    | Parenthesised Expression
-    | BinaryOp Operator Expression Expression
-    -- | Call String [Expression]
+    | Apply Operator [Expression]
     deriving (Show, Eq, Read, Ord)
 
 data Operator =

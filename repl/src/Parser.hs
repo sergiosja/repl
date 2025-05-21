@@ -1,4 +1,4 @@
-module Parser (module Parser) where -- update
+module Parser (parseProgram) where
 
 import Syntax
 import Text.Parsec
@@ -42,9 +42,6 @@ decimal = Token.float lexer
 
 stringLiteral :: Parser String
 stringLiteral = Token.stringLiteral lexer
-
-parens :: Parser Expression -> Parser Expression
-parens = Token.parens lexer
 
 
 -- Value

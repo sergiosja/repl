@@ -8,15 +8,12 @@ import Parser (parseProgram)
 import Eval (eval)
 
 main :: IO ()
-main = repl
-
-repl :: IO ()
-repl = do
+main = do
     putStrLn "repl, version 0.0.1: https://github.com/sergiosja/repl  :? for help (not implemented)"
     loop
     where
         loop = do
-            putStr "\n> "
+            putStr "\nь > "
             hFlush stdout
             line <- getLine
             case line of

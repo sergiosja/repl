@@ -21,32 +21,47 @@ evalExpression (Apply op args) = do
 foldExpression :: Operator -> [Value] -> Either String Value
 foldExpression Plus values = foldPlus values
 foldExpression Minus values = foldMinus values
+foldExpression Times values = foldTimes values
+foldExpression Division values = foldDivision values
+foldExpression LessThan values = foldComparison (<) values
+foldExpression LessThanEqual values = foldComparison (<=) values
+foldExpression GreaterThan values = foldComparison (>) values
+foldExpression GreaterThanEqual values = foldComparison (>=) values
+foldExpression Equal values = foldComparison (==) values
+foldExpression NotEqual values = foldComparison (/=) values
+-- foldExpression And values = foldComparison (&&) values
+-- foldExpression Or values = foldComparison (||) values
 foldExpression _ _ = Left "Unsupported operator"
 
 foldPlus :: [Value] -> Either String Value
-foldPlus [] = Left "Cannot apply operator to empty list"
-foldPlus (Number n : rest) =
-    if all isNumber rest
-    then Right . Number . sum $ map (\(Number x) -> x) (Number n : rest)
-    else Left "Expected numbers"
-foldPlus (Decimal n : rest) =
-    if all isDecimal rest
-    then Right . Decimal . sum $ map (\(Decimal x) -> x) (Decimal n : rest)
-    else Left "Expected decimals"
-foldPlus (Text n : rest) =
-    if all isText rest
-    then Right . Text . concat $ map (\(Text x) -> x) (Text n : rest)
-    else Left "Expected texts"
-foldPlus _ = Left "This value doesn't work with plus"
+foldPlus values
+  | all isNumber values = foldNumbers (+) values
+  | all isDecimal values = foldDecimals (+) values
+  | all isText values = foldTexts (++) values
+  | otherwise = Left "foldPlus fail"
 
 foldMinus :: [Value] -> Either String Value
-foldMinus [] = Left "Cannot apply operator to empty list"
-foldMinus (Number n : rest) =
-    if all isNumber rest
-    then Right . Number . foldl (-) n $ map (\(Number x) -> x) rest
-    else Left "Expected numbers"
-foldMinus (Decimal n : rest) =
-    if all isDecimal rest
-    then Right . Decimal . foldl (-) n $ map (\(Decimal x) -> x) rest
-    else Left "Expected decimals"
-foldMinus _ = Left "This value doesn't work with minus"
+foldMinus values
+  | all isNumber values = foldNumbers (+) values
+  | all isDecimal values = foldDecimals (+) values
+  | otherwise = Left "foldMinus fail"
+
+foldTimes :: [Value] -> Either String Value
+foldTimes values
+  | all isNumber values = foldNumbers (*) values
+  | all isDecimal values = foldDecimals (*) values
+  | otherwise = Left "foldTimes fail"
+
+foldDivision :: [Value] -> Either String Value
+foldDivision values
+  | all isNumber values = foldNumbers div values
+  | all isDecimal values = foldDecimals (/) values
+  | otherwise = Left "foldDivision fail"
+
+foldComparison :: (Value -> Value -> Bool) -> [Value] -> Either String Value
+foldComparison _ [] = Right $ Boolean True
+foldComparison _ [_] = Right $ Boolean True
+foldComparison f (x:y:xs) =
+    if f x y
+    then foldComparison f (y:xs)
+    else Right $ Boolean False

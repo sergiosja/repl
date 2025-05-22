@@ -75,14 +75,15 @@ extractBooleans values =
     then Right $ map extractBoolean values
     else Left "Called `extractBooleans` on a non-boolean value"
 
+
 foldNumbers :: (Integer -> Integer -> Integer) -> [Value] -> Either String Value
 foldNumbers f values = fmap (Number . foldl1 f) (extractNumbers values)
 
 foldDecimals :: (Double -> Double -> Double) -> [Value] -> Either String Value
-foldDecimals f vs = fmap (Decimal . foldl1 f) (extractDecimals vs)
+foldDecimals f values = fmap (Decimal . foldl1 f) (extractDecimals values)
 
 foldTexts :: (String -> String -> String) -> [Value] -> Either String Value
-foldTexts f vs = fmap (Text . foldl1 f) (extractTexts vs)
+foldTexts f values = fmap (Text . foldl1 f) (extractTexts values)
 
 foldBooleans :: (Bool -> Bool -> Bool) -> [Value] -> Either String Value
-foldBooleans f vs = fmap (Boolean . foldl1 f) (extractBooleans vs)
+foldBooleans f values = fmap (Boolean . foldl1 f) (extractBooleans values)

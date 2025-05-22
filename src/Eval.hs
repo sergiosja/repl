@@ -61,7 +61,6 @@ foldDivision values
 foldComparison :: (Value -> Value -> Bool) -> [Value] -> Either String Value
 foldComparison _ [] = Right $ Boolean True
 foldComparison _ [_] = Right $ Boolean True
-foldComparison f (x:y:xs) =
-    if f x y
-    then foldComparison f (y:xs)
-    else Right $ Boolean False
+foldComparison f (x:y:xs)
+    | f x y = foldComparison f (y:xs)
+    | otherwise = Right $ Boolean False

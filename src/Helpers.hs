@@ -15,6 +15,7 @@ module Helpers
     , foldDecimals
     , foldTexts
     , foldBooleans
+    , isBalanced
 ) where
 
 import Syntax
@@ -87,3 +88,14 @@ foldTexts f values = fmap (Text . foldl1 f) (extractTexts values)
 
 foldBooleans :: (Bool -> Bool -> Bool) -> [Value] -> Either String Value
 foldBooleans f values = fmap (Boolean . foldl1 f) (extractBooleans values)
+
+isBalanced :: String -> Bool
+isBalanced = loop 0
+    where
+        loop :: Int -> String -> Bool
+        loop 0 [] = True
+        loop _ [] = False
+        loop n (c:cs)
+            | c == '(' = loop (n + 1) cs
+            | c == ')' = n > 0 && loop (n - 1) cs
+            | otherwise = loop n cs

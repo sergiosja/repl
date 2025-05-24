@@ -45,7 +45,7 @@ Far from it. We can define variables for later use
 1
 ```
 
-Oh, did you see that? Comments are supported too, of course 😎
+Did you see that? Comments are supported too, of course 😎
 
 
 ### Wait, what's up with ь?

@@ -1,8 +1,4 @@
-module PrettyPrinter
-    ( showValue
-    , showExpression
-    , showOperator
-    ) where
+module PrettyPrinter (showValue) where
 
 import Syntax
 
@@ -11,10 +7,11 @@ showValue (Text s) = show s
 showValue (Number n) = show n
 showValue (Decimal d) = show d
 showValue (Boolean b) = show b
-showValue (Quote exprs) = "'" ++ unwords (map showExpression exprs)
+showValue (Quote exprs) = "'(" ++ unwords (map showExpression exprs) ++ ")"
 
 showExpression :: Expression -> String
 showExpression (Constant v) = showValue v
+showExpression (Variable name) = name
 showExpression (Apply op args) = "(" ++ showOperator op ++ " " ++ unwords (map showExpression args) ++ ")"
 
 showOperator :: Operator -> String

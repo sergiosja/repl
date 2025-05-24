@@ -25,7 +25,7 @@ and expressions, like
 
 Oh yeah, we use [polish notation](https://dl.acm.org/doi/pdf/10.5555/1074100.1074698) baby 😎
 
-#### Is that it?
+### Is that it?
 
 Far from it. We can define variables for later use
 

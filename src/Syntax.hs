@@ -2,7 +2,7 @@
 -- :(
 module Syntax (module Syntax) where 
 
-data Program = Program Expression
+data Program = Expression Expression | Statement Statement
     deriving (Show, Eq, Read, Ord)
 
 data Value =
@@ -13,8 +13,12 @@ data Value =
     | Quote [Expression]
     deriving (Show, Eq, Read, Ord)
 
+data Statement = VariableDeclaration String Value -- også kommer funksjoner
+    deriving (Show, Eq, Read, Ord)
+
 data Expression =
       Constant Value
+    | Variable String
     | Apply Operator [Expression]
     deriving (Show, Eq, Read, Ord)
 

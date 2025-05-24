@@ -1,19 +1,46 @@
-module Eval (eval) where
+module Eval (run) where
 
 import Syntax
 import Helpers
 
-eval :: Program -> Either String Value
-eval (Program expr) = evalExpression expr
+import Control.Monad.State
+
+type Stack = [(String, Value)]
+type REPL a = StateT Stack IO a
+
+
+run :: Program -> Stack -> IO (Either String Value, Stack)
+run = runStateT . eval
+
+eval :: Program -> REPL (Either String Value)
+eval (Expression expr) = evalExpression expr
+eval (Statement stmt) = evalStatement stmt
+
+
+-- Statement
+
+evalStatement :: Statement -> REPL (Either String Value)
+evalStatement (VariableDeclaration name value) = do
+    modify ((name, value):)
+    return $ Right value
+
 
 
 -- Expression
 
-evalExpression :: Expression -> Either String Value
-evalExpression (Constant v) = Right v
+evalExpression :: Expression -> REPL (Either String Value)
+evalExpression (Constant v) = return $ Right v
+evalExpression (Variable name) = do
+    stack <- get
+    return $
+        case lookup name stack of
+            Just value -> Right value
+            Nothing -> Left $ "Variable not found: " ++ name
 evalExpression (Apply op args) = do
     values <- traverse evalExpression args
-    foldExpression op values
+    case sequence values of
+        Left err -> return $ Left err
+        Right values' -> return $ foldExpression op values'
 
 
 -- Operator

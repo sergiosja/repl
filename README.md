@@ -8,7 +8,7 @@ It's loosely based on [R5RS: Legacy Scheme](https://docs.racket-lang.org/r5rs/in
 
 We can execute values like numbers and quotes
 
-```scheme
+```haskell
 repl, version 0.0.1
 
 ь > 1
@@ -20,7 +20,7 @@ repl, version 0.0.1
 
 and expressions
 
-```scheme
+```haskell
 ь > (+ 2 3 1 2 9 9)
 26
 
@@ -34,9 +34,9 @@ Oh yeah, we use [polish notation](https://dl.acm.org/doi/pdf/10.5555/1074100.107
 
 Far from it. We can define variables for later use
 
-```scheme
-ь > (define currentYear 2025)
-#<var:currentYear=2025> -- I know ie the DrRacket repl doesn't return this but god forbid a boy has fun with it
+```haskell
+ь > (define currentYear 2025) -- I know ie the DrRacket repl doesn't return this but god forbid a boy has fun with it
+#<var:currentYear=2025>
 
 ь > (define lastYear 2024)
 #<var:lastYear=2024>
@@ -81,7 +81,7 @@ I'm just assuming you have stack and parsec and all that installed 😇😘
 
 Don't worry, you can actually leave whenever you want, you just have to say goodbye! Because an Irish goodbye would hurt its (my) feelings 😇
 
-```scheme
+```haskell
 repl, version 0.0.1
 
 ь > "exit"

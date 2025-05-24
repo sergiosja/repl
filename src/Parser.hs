@@ -8,19 +8,22 @@ import qualified Text.Parsec.Token as Token
 
 lexer :: Token.TokenParser ()
 lexer = Token.makeTokenParser emptyDef {
-    -- Token.identStart = letter,
-    -- Token.identLetter = alphaNum <|> char '\'',
+    Token.identStart = letter,
+    Token.identLetter = alphaNum,
     Token.reservedOpNames =
         [ "(", ")", "+", "-", "*", "/"
         , "<", ">", "==", "/=", ">=", "<="
         ],
     Token.reservedNames =
-        [ "and", "or", "not" ],
+        [ "and", "or", "not", "define" ],
     Token.commentStart = "#|",
     Token.commentEnd = "|#",
     Token.commentLine = ";",
     Token.nestedComments = False
 }
+
+identifier :: Parser String
+identifier = Token.identifier lexer
 
 reserved :: String -> Parser ()
 reserved = Token.reserved lexer
@@ -70,11 +73,26 @@ parseQuote =
     Quote <$> (char '\'' *> char '(' *> parseExpression `sepBy` whiteSpace <* char ')')
 
 
+-- Statement
+
+parseStatement :: Parser Statement
+parseStatement = choice
+    [ try parseVariableDeclaration
+    ]
+
+parseVariableDeclaration :: Parser Statement
+parseVariableDeclaration =
+    VariableDeclaration
+        <$> (char '(' *> reserved "define" *> identifier)
+        <*> (parseValue <* char ')')
+
+
 -- Expression
 
 parseExpression :: Parser Expression
 parseExpression = choice
     [ try parseApply
+    , try parseVariable
     , parseConstant
     ]
 
@@ -82,6 +100,10 @@ parseApply :: Parser Expression
 parseApply =
     Apply <$> (char '(' *> parseOperator)
           <*> (many parseExpression <* char ')')
+
+parseVariable :: Parser Expression
+parseVariable =
+    Variable <$> identifier
 
 parseConstant :: Parser Expression
 parseConstant = Constant <$> parseValue
@@ -109,5 +131,5 @@ parseOperator = choice
 -- Program
 
 parseProgram :: Parser Program
-parseProgram =
-    Program <$> parseExpression
+parseProgram = whiteSpace *>
+    (Expression <$> parseExpression <|> Statement <$> parseStatement)

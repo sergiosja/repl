@@ -2,6 +2,7 @@ module Eval (run) where
 
 import Syntax
 import Helpers
+import PrettyPrinter (showValue)
 
 import Control.Monad.State
 
@@ -22,7 +23,7 @@ eval (Statement stmt) = evalStatement stmt
 evalStatement :: Statement -> REPL (Either String Value)
 evalStatement (VariableDeclaration name value) = do
     modify ((name, value):)
-    return $ Right value
+    return $ Right $ Text ("#<var:" ++ name ++ "=" ++ showValue value ++ ">")
 
 
 
@@ -69,8 +70,8 @@ foldPlus values
 
 foldMinus :: [Value] -> Either String Value
 foldMinus values
-  | all isNumber values = foldNumbers (+) values
-  | all isDecimal values = foldDecimals (+) values
+  | all isNumber values = foldNumbers (-) values
+  | all isDecimal values = foldDecimals (-) values
   | otherwise = Left "foldMinus fail"
 
 foldTimes :: [Value] -> Either String Value

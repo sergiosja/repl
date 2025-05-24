@@ -3,7 +3,7 @@ module PrettyPrinter (showValue) where
 import Syntax
 
 showValue :: Value -> String
-showValue (Text s) = show s
+showValue (Text s) = s
 showValue (Number n) = show n
 showValue (Decimal d) = show d
 showValue (Boolean b) = show b

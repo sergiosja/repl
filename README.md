@@ -6,7 +6,7 @@ I just really wanted to make a repl. Hopefully I'll find a nice name for it late
 
 It's loosely based on [R5RS: Legacy Scheme](https://docs.racket-lang.org/r5rs/index.html), the programming language with the objectively prettiest syntax.
 
-You can execute values like numbers and quotes, like
+You can execute values like numbers and quotes
 
 ```scheme
 ь > 1
@@ -16,7 +16,7 @@ You can execute values like numbers and quotes, like
 '(2 3 1 2 9 9)
 ```
 
-and expressions, like
+and expressions
 
 ```scheme
 ь > (+ 2 3 1 2 9 9)

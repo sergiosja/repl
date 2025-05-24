@@ -19,7 +19,9 @@ main = do
             hFlush stdout
             line <- getLine
             case line of
-                "ciao" -> return ()
+                "ciao" -> do
+                    putStrLn "Arrivederci caro 👋"
+                    return ()
                 _ | isPrefixOf "ast" line -> do
                     printAST $ drop 3 line
                     repl stack

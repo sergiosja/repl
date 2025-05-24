@@ -97,6 +97,7 @@ exit
 leave
 
 ь > ciao
+Arrivederci caro 👋
 sergey@Sergeys-MBP repl %
 ```
 

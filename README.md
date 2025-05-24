@@ -54,19 +54,19 @@ Oh, that's just a [мягкий знак](https://ru.wikipedia.org/wiki/%D0%AC) 
 
 Go to your terminal and run
 
-```
+```bash
 stack install
 ```
 
 and then I think
 
-```
+```bash
 stack build
 ```
 
 and if that goes well you can do
 
-```
+```bash
 stack run
 ```
 
@@ -78,7 +78,7 @@ I'm just assuming you have stack and parsec and all that installed 😇😘
 
 Don't worry, you can actually leave whenever you want, you just have to say goodbye! Because an Irish goodbye would hurt its (my) feelings 😇
 
-```
+```scheme
 repl, version 0.0.1
 
 ь > "exit"

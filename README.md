@@ -9,6 +9,8 @@ It's loosely based on [R5RS: Legacy Scheme](https://docs.racket-lang.org/r5rs/in
 You can execute values like numbers and quotes
 
 ```scheme
+repl, version 0.0.1
+
 ь > 1
 1
 
@@ -71,6 +73,29 @@ stack run
 and you should be good. Or else your guess is as good as mine 😄
 
 I'm just assuming you have stack and parsec and all that installed 😇😘
+
+### Help, I'm stuck in the repl forever
+
+Don't worry, you can actually leave whenever you want, you just have to say goodbye! Because an Irish goodbye would hurt its (my) feelings 😇
+
+```
+repl, version 0.0.1
+
+ь > "exit"
+exit
+
+ь > ":quit"
+:quit
+
+ь > ":wq"
+:wq
+
+ь > "leave"
+leave
+
+ь > ciao
+sergey@Sergeys-MBP repl %
+```
 
 ## References
 <a id="1">[1]</a> 

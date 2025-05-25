@@ -1,5 +1,6 @@
 module Main (main) where
 
+import qualified Data.Map as Map
 import System.IO (hFlush, stdout)
 import Data.List(isPrefixOf)
 import Text.Parsec
@@ -7,22 +8,25 @@ import Text.Parsec
 import PrettyPrinter (showValue)
 import Parser (parseProgram)
 import Helpers (isBalanced)
-import Eval (run)
+import Eval (Scope(..), run)
 
+initialScope :: Scope
+initialScope = Scope
+    { procedures = Map.empty, stack = [] }
 
 main :: IO ()
 main = do
     putStrLn "repl, version 0.0.1: https://github.com/sergiosja/repl  :? for help (not implemented)"
-    repl []
+    repl initialScope
     where
-        repl stack = do
+        repl scope = do
             putStr "\nь > "
             hFlush stdout
             input <- readMultiline []
             case unwords input of
                 program | isPrefixOf "ast" program -> do
                     printAST $ drop 3 program
-                    repl stack
+                    repl scope
 
                 program | isPrefixOf "ciao" program -> do
                     putStrLn "Arrivederci caro 👋"
@@ -31,17 +35,17 @@ main = do
                 program ->
                     case parse parseProgram "" program of
                         Right p -> do
-                            (res, newStack) <- run p stack
+                            (res, newScope) <- run p scope
                             case res of
                                 Left err ->
-                                    continue ("Eval error: " ++ show err) stack
+                                    continue ("Eval error: " ++ show err) scope
                                 Right value -> putStrLn $ showValue value
-                            repl newStack
+                            repl newScope
                         Left err ->
-                            continue ("Parse error: " ++ show err) stack
-        continue msg stack = do
+                            continue ("Parse error: " ++ show err) scope
+        continue msg scope = do
             putStrLn $ msg
-            repl stack
+            repl scope
 
 readMultiline :: [String] -> IO [String]
 readMultiline acc = do

@@ -13,13 +13,16 @@ data Value =
     | Quote [Expression]
     deriving (Show, Eq, Read, Ord)
 
-data Statement = VariableDeclaration String Value -- også kommer funksjoner
-    deriving (Show, Eq, Read, Ord)
+data Statement =
+    VariableDeclaration String Expression
+  | ProcedureDeclaration String [String] Expression
+  deriving (Show, Eq, Read, Ord)
 
 data Expression =
       Constant Value
     | Variable String
     | Apply Operator [Expression]
+    | Call String [Expression]
     deriving (Show, Eq, Read, Ord)
 
 data Operator =

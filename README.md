@@ -35,11 +35,11 @@ Oh yeah, we use [polish notation](https://dl.acm.org/doi/pdf/10.5555/1074100.107
 Far from it. We can define variables for later use
 
 ```haskell
-ь > (define currentYear 2025) -- I know ie the DrRacket repl doesn't return this but god forbid a boy has fun with it
-#<var:currentYear=2025>
+ь > (define currentYear 2025) -- I know ie the DrRacket repl doesn't return this but god forbid a boy has some fun with it
+#<var:currentYear>
 
 ь > (define lastYear 2024)
-#<var:lastYear=2024>
+#<var:lastYear>
 
 ь > (- currentYear lastYear)
 1

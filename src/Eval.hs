@@ -1,16 +1,21 @@
-module Eval (run) where
+module Eval (Scope(..), run) where
 
 import Syntax
 import Helpers
 import PrettyPrinter (showValue)
 
+import qualified Data.Map as Map
 import Control.Monad.State
 
+type Procedures = Map.Map String ([String], Expression)
 type Stack = [(String, Value)]
-type REPL a = StateT Stack IO a
 
+data Scope = Scope
+  { procedures :: Procedures, stack :: Stack}
+  deriving (Show, Eq)
+type REPL a = StateT Scope IO a
 
-run :: Program -> Stack -> IO (Either String Value, Stack)
+run :: Program -> Scope -> IO (Either String Value, Scope)
 run = runStateT . eval
 
 eval :: Program -> REPL (Either String Value)
@@ -21,22 +26,28 @@ eval (Statement stmt) = evalStatement stmt
 -- Statement
 
 evalStatement :: Statement -> REPL (Either String Value)
-evalStatement (VariableDeclaration name value) = do
-    modify ((name, value):)
-    return $ Right $ Text ("#<var:" ++ name ++ "=" ++ showValue value ++ ">")
-
-
+evalStatement (VariableDeclaration name expression) = do
+  scope@(Scope { stack = stack' }) <- get
+  maybeExpression <- evalExpression expression
+  case maybeExpression of
+    Left err -> return $ Left err
+    Right value -> do
+      put scope { stack = (name, value) : stack' }
+      return $ Right $ Text ("#<var:" ++ name ++ ">")
+evalStatement (ProcedureDeclaration name args body) = do
+  scope@(Scope { procedures = procedures' }) <- get
+  put scope { procedures = Map.insert name (args, body) procedures' }
+  return $ Right $ Text ("#<procedure:" ++ name ++ ">")
 
 -- Expression
 
 evalExpression :: Expression -> REPL (Either String Value)
 evalExpression (Constant v) = return $ Right v
 evalExpression (Variable name) = do
-    stack <- get
-    return $
-        case lookup name stack of
-            Just value -> Right value
-            Nothing -> Left $ "Variable not found: " ++ name
+  Scope { stack = stack' } <- get
+  return $ case lookup name stack' of
+    Just value -> Right value
+    Nothing -> Left $ "Variable not found: " ++ name
 evalExpression (Apply op args) = do
     values <- traverse evalExpression args
     case sequence values of

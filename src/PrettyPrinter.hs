@@ -12,6 +12,7 @@ showValue (Quote exprs) = "'(" ++ unwords (map showExpression exprs) ++ ")"
 showExpression :: Expression -> String
 showExpression (Constant v) = showValue v
 showExpression (Variable name) = name
+showExpression (Call name args) = "(" ++ name ++ " " ++ unwords (map showExpression args) ++ ")"
 showExpression (Apply op args) = "(" ++ showOperator op ++ " " ++ unwords (map showExpression args) ++ ")"
 
 showOperator :: Operator -> String

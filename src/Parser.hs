@@ -78,14 +78,21 @@ parseQuote =
 parseStatement :: Parser Statement
 parseStatement = choice
     [ try parseVariableDeclaration
+    , parseProcedureDeclaration
     ]
 
 parseVariableDeclaration :: Parser Statement
 parseVariableDeclaration =
     VariableDeclaration
         <$> (char '(' *> reserved "define" *> identifier)
-        <*> (parseValue <* char ')')
+        <*> (parseExpression <* char ')')
 
+parseProcedureDeclaration :: Parser Statement
+parseProcedureDeclaration =
+    ProcedureDeclaration
+        <$> (char '(' *> reserved "define" *> char '(' *> identifier)
+        <*> (many1 identifier <* char ')')
+        <*> (whiteSpace *> parseExpression <* char ')')
 
 -- Expression
 
@@ -94,7 +101,7 @@ parseExpression = choice
     [ try parseApply
     , try parseVariable
     , parseConstant
-    ]
+    ] <?> "expression"
 
 parseApply :: Parser Expression
 parseApply =

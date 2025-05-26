@@ -57,8 +57,8 @@ Oh, that's just a [мягкий знак](https://ru.wikipedia.org/wiki/%D0%AC) 
 For debugging I find it very valuable to print my program's AST. After the REPL became perfect I removed it, but then I got thinking, why not keep it on as a feature? So if you wanna see your program's AST you can prefix your programs with `ast`
 
 ```haskell
-ь > ast a
-Expression (Variable "a")
+ь > ast 1
+Expression (Constant (Number 1))
 
 ь > ast x
 Expression (Variable "x")

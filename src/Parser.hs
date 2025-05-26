@@ -99,6 +99,7 @@ parseProcedureDeclaration =
 parseExpression :: Parser Expression
 parseExpression = choice
     [ try parseApply
+    , try parseCall
     , try parseVariable
     , parseConstant
     ] <?> "expression"
@@ -107,6 +108,11 @@ parseApply :: Parser Expression
 parseApply =
     Apply <$> (char '(' *> parseOperator)
           <*> (many parseExpression <* char ')')
+
+parseCall :: Parser Expression
+parseCall =
+    Call <$> (char '(' *> identifier)
+         <*> (many parseExpression <* char ')')
 
 parseVariable :: Parser Expression
 parseVariable =

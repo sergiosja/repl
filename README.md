@@ -50,11 +50,11 @@ Did you see that? Comments are supported too, of course 😎
 
 ### Wait, what's up with ь?
 
-Oh, that's just a [мягкий знак](https://ru.wikipedia.org/wiki/%D0%AC) (soft sign), my favourite letter in the Cyrillic alphabet. It "serves as an indicator of palatalization of the preceding consonan" [[1]](#1).
+Oh, that's just a [мягкий знак](https://ru.wikipedia.org/wiki/%D0%AC) (soft sign), my favourite letter in the Cyrillic alphabet. It "serves as an indicator of palatalization of the preceding consonant" [[1]](#1).
 
 ### What else?
 
-For debugging I find it very valuable to print my program's AST. After the REPL became perfect I removed it, but then I got thinking, why not keep it on as a feature? So if you wanna see your program's AST you can prefix your programs with `ast`
+For debugging I find it valuable to print my program's AST. After the REPL became perfect I removed it, but then I got thinking, why not keep it on as a feature? So if you wanna see your program's AST you can prefix your programs with `ast`
 
 ```haskell
 ь > ast 1

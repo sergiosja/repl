@@ -2,6 +2,8 @@
 
 I just really wanted to make a repl. Hopefully I'll find a nice name for it later:)
 
+🗣️ Shoutout [Val](https://github.com/valbuild/val)
+
 ### What can it do?
 
 It's loosely based on [R5RS: Legacy Scheme](https://docs.racket-lang.org/r5rs/index.html), the programming language with the objectively prettiest syntax.
@@ -36,10 +38,10 @@ Far from it. We can define variables for later use
 
 ```haskell
 ь > (define currentYear 2025) -- I know ie the DrRacket repl doesn't return this. Sue me!
-#<var:currentYear>
+#<val:currentYear>
 
 ь > (define lastYear 2024)
-#<var:lastYear>
+#<val:lastYear>
 
 ь > (- currentYear lastYear)
 1

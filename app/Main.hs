@@ -7,12 +7,15 @@ import Text.Parsec
 
 import PrettyPrinter (showValue)
 import Parser (parseProgram)
-import Helpers (isBalanced)
+-- import Helpers (isBalanced)
 import Eval (Scope(..), run)
+import Syntax
 
 initialScope :: Scope
 initialScope = Scope
-    { procedures = Map.empty, stack = [] }
+    { procedures = Map.empty
+    , stack = [[]]
+    }
 
 main :: IO ()
 main = do
@@ -22,46 +25,41 @@ main = do
         repl scope = do
             putStr "\nь > "
             hFlush stdout
-            input <- readMultiline []
-            case unwords input of
-                program | isPrefixOf "ast" program -> do
-                    printAST $ drop 3 program
-                    repl scope
-
-                program | isPrefixOf "ciao" program -> do
+            program <- getLine
+            if program == "ciao"
+                then do
                     putStrLn "Arrivederci caro 👋"
                     return ()
-
-                program ->
-                    case parse parseProgram "" program of
-                        Right p -> do
-                            (res, newScope) <- run p scope
-                            case res of
-                                Left err ->
-                                    continue ("Eval error: " ++ show err) scope
-                                Right value -> putStrLn $ showValue value
-                            repl newScope
-                        Left err ->
-                            continue ("Parse error: " ++ show err) scope
+            else if isPrefixOf "ast" program
+                then do
+                    printAST $ drop 3 program
+                    repl scope
+            else do
+                res <- evalIfParsed program scope
+                case res of
+                    Left errorMessage ->
+                        continue errorMessage scope
+                    Right (value, newScope) ->
+                        continue (showValue value) newScope
         continue msg scope = do
             putStrLn $ msg
             repl scope
 
-readMultiline :: [String] -> IO [String]
-readMultiline acc = do
-    line <- getLine
-    let program = acc ++ [line]
-    case () of
-        _ | isPrefixOf "ciao" line -> return ["ciao"]
-          | isBalanced $ unwords program -> return program
-          | otherwise -> readMultiline program
+evalIfParsed :: String -> Scope -> IO (Either String (Value, Scope))
+evalIfParsed program scope =
+    case parse parseProgram "" program of
+        Left err -> return $ Left $ "Parse error: " ++ show err
+        Right p -> eval p scope
+
+eval :: Program -> Scope -> IO (Either String (Value, Scope))
+eval program scope = do
+    (res, newScope) <- run program scope
+    return $ case res of
+        Right value -> Right (value, newScope)
+        Left err -> Left $ "Eval error: " ++ show err
 
 printAST :: String -> IO ()
 printAST program = do
     case parse parseProgram "" program of
         Right ast -> print ast
         Left err -> putStrLn $ "Parse error when printing AST: " ++ show err
-
-{-
- - Make the program crash nicely if the user inputs too many parentheses, e.g. '())
--}

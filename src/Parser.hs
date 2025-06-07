@@ -43,11 +43,16 @@ decimal = Token.float lexer
 stringLiteral :: Parser String
 stringLiteral = Token.stringLiteral lexer
 
+wrapWS :: Parser a -> Parser a
+wrapWS p = whiteSpace *> p <* whiteSpace
+
+parens :: Parser a -> Parser a
+parens = Token.parens lexer
 
 -- Value
 
 parseValue :: Parser Value
-parseValue = choice
+parseValue = wrapWS $ choice
     [ try parseText
     , try parseDecimal
     , try parseNumber
@@ -76,47 +81,48 @@ parseQuote =
 -- Statement
 
 parseStatement :: Parser Statement
-parseStatement = choice
+parseStatement = wrapWS $ choice
     [ try parseVariableDeclaration
     , parseProcedureDeclaration
     ]
 
 parseVariableDeclaration :: Parser Statement
-parseVariableDeclaration =
+parseVariableDeclaration = parens $
     VariableDeclaration
-        <$> (char '(' *> reserved "define" *> identifier)
-        <*> (parseExpression <* char ')')
+        <$> (reserved "define" *> identifier) <*> parseExpression
 
 parseProcedureDeclaration :: Parser Statement
-parseProcedureDeclaration =
+parseProcedureDeclaration = parens $
     ProcedureDeclaration
-        <$> (char '(' *> reserved "define" *> char '(' *> identifier)
+        <$> (reserved "define" *> char '(' *> identifier)
         <*> (many1 identifier <* char ')')
-        <*> (whiteSpace *> parseExpression <* char ')')
+        <*> parseExpression
 
 -- Expression
 
 parseExpression :: Parser Expression
-parseExpression = choice
+parseExpression = wrapWS $ choice
     [ try parseApply
     , try parseCall
     , try parseVariable
     , parseConstant
-    ] <?> "expression"
+    ]
+
+parseExpressions :: Parser [Expression]
+parseExpressions =
+    many parseExpression
 
 parseApply :: Parser Expression
-parseApply =
-    Apply <$> (char '(' *> parseOperator)
-          <*> (many parseExpression <* char ')')
+parseApply = parens $
+    Apply <$> parseOperator <*> parseExpressions
 
 parseCall :: Parser Expression
-parseCall =
-    Call <$> (char '(' *> identifier)
-         <*> (many parseExpression <* char ')')
+parseCall = parens $
+    Call <$> (whiteSpace *> identifier)
+         <*> parseExpressions
 
 parseVariable :: Parser Expression
-parseVariable =
-    Variable <$> identifier
+parseVariable = Variable <$> identifier
 
 parseConstant :: Parser Expression
 parseConstant = Constant <$> parseValue
@@ -125,19 +131,19 @@ parseConstant = Constant <$> parseValue
 -- Operator
 
 parseOperator :: Parser Operator
-parseOperator = choice
-    [ reservedOp "+" *> pure Plus
-    , reservedOp "-" *> pure Minus
-    , reservedOp "*" *> pure Times
-    , reservedOp "/" *> pure Division
-    , reservedOp "<" *> pure LessThan
-    , reservedOp ">" *> pure GreaterThan
-    , reservedOp "<=" *> pure LessThanEqual
-    , reservedOp ">=" *> pure GreaterThanEqual
-    , reservedOp "==" *> pure Equal
-    , reservedOp "/=" *> pure NotEqual
-    , reserved "and" *> pure And
-    , reserved "or" *> pure Or
+parseOperator = wrapWS $ choice
+    [ try $ reservedOp "+" *> pure Plus
+    , try $ reservedOp "-" *> pure Minus
+    , try $ reservedOp "*" *> pure Times
+    , try $ reservedOp "/" *> pure Division
+    , try $ reservedOp "<" *> pure LessThan
+    , try $ reservedOp ">" *> pure GreaterThan
+    , try $ reservedOp "<=" *> pure LessThanEqual
+    , try $ reservedOp ">=" *> pure GreaterThanEqual
+    , try $ reservedOp "==" *> pure Equal
+    , try $ reservedOp "/=" *> pure NotEqual
+    , try $ reservedOp "and" *> pure And
+    , reservedOp "or" *> pure Or
     ]
 
 
@@ -145,4 +151,5 @@ parseOperator = choice
 
 parseProgram :: Parser Program
 parseProgram = whiteSpace *>
-    (Expression <$> parseExpression <|> Statement <$> parseStatement)
+    (try (Expression <$> parseExpression) <|> Statement <$> parseStatement)
+    <* (many $ char ')')

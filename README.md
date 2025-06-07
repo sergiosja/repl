@@ -35,7 +35,7 @@ Oh yeah, we use [polish notation](https://dl.acm.org/doi/pdf/10.5555/1074100.107
 Far from it. We can define variables for later use
 
 ```haskell
-ь > (define currentYear 2025) -- I know ie the DrRacket repl doesn't return this but god forbid a boy has some fun with it
+ь > (define currentYear 2025) -- I know ie the DrRacket repl doesn't return this. Sue me!
 #<var:currentYear>
 
 ь > (define lastYear 2024)
@@ -47,6 +47,21 @@ Far from it. We can define variables for later use
 
 Did you see that? Comments are supported too, of course 😎
 
+If your imagination allows for it, you can also make your own procedures
+
+```haskell
+ь > (define (plus x y) (+ x y))
+#<procedure:plus>
+
+ь > (plus 10 10)
+20
+
+ь > (define (plus1 x) (plus x 1))
+#<procedure:plus1>
+
+ь > (plus1 10)
+11
+```
 
 ### Wait, what's up with ь?
 
@@ -114,6 +129,8 @@ leave
 Arrivederci caro 👋
 sergey@Sergeys-MBP repl %
 ```
+
+This means you cannot have variables/procedures called `ciao`.. which is a well thought-out feature of course...
 
 ## References
 <a id="1">[1]</a> 

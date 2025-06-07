@@ -1,14 +1,15 @@
-module Eval (Scope(..), run) where
+module Eval (Scope(..), REPL, run) where
 
 import Syntax
 import Helpers
-import PrettyPrinter (showValue)
 
 import qualified Data.Map as Map
 import Control.Monad.State
+import Control.Monad (zipWithM_)
 
-type Procedures = Map.Map String ([String], Expression)
-type Stack = [(String, Value)]
+type Procedure = ([String], Expression)
+type Procedures = Map.Map String Procedure
+type Stack = [[(String, Value)]]
 
 data Scope = Scope
   { procedures :: Procedures, stack :: Stack}
@@ -23,21 +24,39 @@ eval (Expression expr) = evalExpression expr
 eval (Statement stmt) = evalStatement stmt
 
 
+-- Scope management
+
+pushScope :: REPL ()
+pushScope = do
+  scope@(Scope { stack = stack' }) <- get
+  put scope { stack = [] : stack' }
+
+popScope :: REPL ()
+popScope = do
+  scope@(Scope { stack = (_ : rest) }) <- get
+  put scope { stack = rest }
+
+bindVar :: String -> Value -> REPL ()
+bindVar name value = do
+  scope@(Scope { stack = (current : rest) }) <- get
+  put scope { stack = ((name, value) : current) : rest }
+
+
 -- Statement
 
 evalStatement :: Statement -> REPL (Either String Value)
 evalStatement (VariableDeclaration name expression) = do
-  scope@(Scope { stack = stack' }) <- get
   maybeExpression <- evalExpression expression
   case maybeExpression of
     Left err -> return $ Left err
     Right value -> do
-      put scope { stack = (name, value) : stack' }
+      bindVar name value
       return $ Right $ Text ("#<var:" ++ name ++ ">")
 evalStatement (ProcedureDeclaration name args body) = do
   scope@(Scope { procedures = procedures' }) <- get
   put scope { procedures = Map.insert name (args, body) procedures' }
   return $ Right $ Text ("#<procedure:" ++ name ++ ">")
+
 
 -- Expression
 
@@ -45,9 +64,33 @@ evalExpression :: Expression -> REPL (Either String Value)
 evalExpression (Constant v) = return $ Right v
 evalExpression (Variable name) = do
   Scope { stack = stack' } <- get
-  return $ case lookup name stack' of
-    Just value -> Right value
-    Nothing -> Left $ "Variable not found: " ++ name
+  return $ searchScopes stack' name
+  where
+    searchScopes [] _ = Left $ "Variable not found: " ++ name
+    searchScopes (current : rest) var =
+      case lookup var current of
+        Just value -> Right value
+        Nothing -> searchScopes rest var
+evalExpression (Call name args) = do
+  maybeProc <- searchScopes name
+  case maybeProc of
+    Just (params, expression) ->
+        if length params /= length args then
+          return $ Left ("Expexted " ++ show (length params) ++ " arguments, but got " ++ show (length args))
+        else do
+          maybeValues <- mapM evalExpression args
+          case sequence maybeValues of
+            Left err -> return $ Left err
+            Right values -> do
+              pushScope
+              zipWithM_ bindVar params values
+              evalExpression expression <* popScope
+    Nothing -> return $ Left $ "Procedure not found: " ++ name
+  where
+    searchScopes :: String -> REPL (Maybe Procedure)
+    searchScopes name' = do
+      Scope { procedures = env } <- get
+      return $ Map.lookup name' env
 evalExpression (Apply op args) = do
     values <- traverse evalExpression args
     case sequence values of

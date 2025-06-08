@@ -15,6 +15,7 @@ module Helpers
     , foldDecimals
     , foldTexts
     , foldBooleans
+    , truthy
 ) where
 
 import Syntax
@@ -87,3 +88,7 @@ foldTexts f values = fmap (Text . foldl1 f) (extractTexts values)
 
 foldBooleans :: (Bool -> Bool -> Bool) -> [Value] -> Either String Value
 foldBooleans f values = fmap (Boolean . foldl1 f) (extractBooleans values)
+
+truthy :: Value -> Bool
+truthy (Boolean False) = False
+truthy _ = True

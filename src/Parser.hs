@@ -17,7 +17,7 @@ lexer = Token.makeTokenParser emptyDef {
         ],
     Token.reservedNames =
         [ "and", "or", "not", "define"
-        , "if" ],
+        , "if", "#t", "#f" ],
     Token.commentStart = "#|",
     Token.commentEnd = "|#",
     Token.commentLine = ";",
@@ -73,7 +73,7 @@ parseNumber = Number <$> integer
 
 parseBoolean :: Parser Value
 parseBoolean =
-    Boolean <$> (reserved "true" *> pure True <|> reserved "false" *> pure False)
+    Boolean <$> (reserved "#t" $> True <|> reserved "#f" $> False)
 
 parseQuote :: Parser Value
 parseQuote =
@@ -159,4 +159,4 @@ parseOperator = wrapWS $ choice
 parseProgram :: Parser Program
 parseProgram = whiteSpace *>
     (try (Expression <$> parseExpression) <|> Statement <$> parseStatement)
-    <* (many $ char ')')
+    <* many (char ')')

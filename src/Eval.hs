@@ -51,7 +51,7 @@ evalStatement (VariableDeclaration name expression) = do
     Left err -> return $ Left err
     Right value -> do
       bindVar name value
-      return $ Right $ Text ("#<var:" ++ name ++ ">")
+      return $ Right $ Text ("#<val:" ++ name ++ ">")
 evalStatement (ProcedureDeclaration name args body) = do
   scope@(Scope { procedures = procedures' }) <- get
   put scope { procedures = Map.insert name (args, body) procedures' }
@@ -96,6 +96,14 @@ evalExpression (Apply op args) = do
     case sequence values of
         Left err -> return $ Left err
         Right values' -> return $ foldExpression op values'
+evalExpression (If cond case1 case2) = do
+  condValue <- evalExpression cond
+  case condValue of
+    Left err -> return $ Left err
+    Right value ->
+      if truthy value
+      then evalExpression case1
+      else evalExpression case2
 
 
 -- Operator

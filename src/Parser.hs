@@ -4,6 +4,7 @@ import Syntax
 import Text.Parsec
 import Text.Parsec.String
 import Text.Parsec.Language
+import Data.Functor (($>))
 import qualified Text.Parsec.Token as Token
 
 lexer :: Token.TokenParser ()
@@ -15,7 +16,8 @@ lexer = Token.makeTokenParser emptyDef {
         , "<", ">", "==", "/=", ">=", "<="
         ],
     Token.reservedNames =
-        [ "and", "or", "not", "define" ],
+        [ "and", "or", "not", "define"
+        , "if" ],
     Token.commentStart = "#|",
     Token.commentEnd = "|#",
     Token.commentLine = ";",
@@ -102,7 +104,8 @@ parseProcedureDeclaration = parens $
 
 parseExpression :: Parser Expression
 parseExpression = wrapWS $ choice
-    [ try parseApply
+    [ try parseIf
+    , try parseApply
     , try parseCall
     , try parseVariable
     , parseConstant
@@ -111,6 +114,10 @@ parseExpression = wrapWS $ choice
 parseExpressions :: Parser [Expression]
 parseExpressions =
     many parseExpression
+
+parseIf :: Parser Expression
+parseIf = parens $
+    If <$> (reserved "if" *> parseExpression) <*> parseExpression <*> parseExpression
 
 parseApply :: Parser Expression
 parseApply = parens $
@@ -132,18 +139,18 @@ parseConstant = Constant <$> parseValue
 
 parseOperator :: Parser Operator
 parseOperator = wrapWS $ choice
-    [ try $ reservedOp "+" *> pure Plus
-    , try $ reservedOp "-" *> pure Minus
-    , try $ reservedOp "*" *> pure Times
-    , try $ reservedOp "/" *> pure Division
-    , try $ reservedOp "<" *> pure LessThan
-    , try $ reservedOp ">" *> pure GreaterThan
-    , try $ reservedOp "<=" *> pure LessThanEqual
-    , try $ reservedOp ">=" *> pure GreaterThanEqual
-    , try $ reservedOp "==" *> pure Equal
-    , try $ reservedOp "/=" *> pure NotEqual
-    , try $ reservedOp "and" *> pure And
-    , reservedOp "or" *> pure Or
+    [ try $ reservedOp "+" $> Plus
+    , try $ reservedOp "-" $> Minus
+    , try $ reservedOp "*" $> Times
+    , try $ reservedOp "/" $> Division
+    , try $ reservedOp "<" $> LessThan
+    , try $ reservedOp ">" $> GreaterThan
+    , try $ reservedOp "<=" $> LessThanEqual
+    , try $ reservedOp ">=" $> GreaterThanEqual
+    , try $ reservedOp "==" $> Equal
+    , try $ reservedOp "/=" $> NotEqual
+    , try $ reservedOp "and" $> And
+    , reservedOp "or" $> Or
     ]
 
 

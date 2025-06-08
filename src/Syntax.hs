@@ -21,6 +21,7 @@ data Statement =
 data Expression =
       Constant Value
     | Variable String
+    | If Expression Expression Expression
     | Apply Operator [Expression]
     | Call String [Expression]
     deriving (Show, Eq, Read, Ord)

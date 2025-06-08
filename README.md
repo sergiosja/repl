@@ -84,6 +84,15 @@ Expression (Variable "x")
 Statement (VariableDeclaration "x" (Number 1))
 ```
 
+also, (I presonally believe) keeping track of parentheses in the outermost scope is meaningless in a LISP language. Therefore you can do
+
+```haskell
+ь > (cond ((#f 1) (#f 2) (#t 3)))))))
+3
+```
+
+just like God intended
+
 ### Hmm, let me try this
 
 Go to your terminal and run

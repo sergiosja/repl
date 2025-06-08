@@ -97,13 +97,21 @@ evalExpression (Apply op args) = do
         Left err -> return $ Left err
         Right values' -> return $ foldExpression op values'
 evalExpression (If cond case1 case2) = do
-  condValue <- evalExpression cond
-  case condValue of
+  res <- evalExpression cond
+  case res of
     Left err -> return $ Left err
     Right value ->
       if truthy value
       then evalExpression case1
       else evalExpression case2
+evalExpression (Cond branches) =
+  case branches of
+    [] -> return $ Right Void
+    [(condExpr, resExpr)] ->
+      if condExpr == Variable "else"
+      then evalExpression resExpr
+      else evalExpression (If condExpr resExpr (Constant Void))
+    (condExpr, resExpr):branches' -> evalExpression (If condExpr resExpr (Cond branches'))
 
 
 -- Operator

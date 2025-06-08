@@ -39,6 +39,9 @@ main = do
                 case res of
                     Left errorMessage ->
                         continue errorMessage scope
+                    Right (Void, newScope) -> do
+                        pure ()
+                        repl newScope
                     Right (value, newScope) ->
                         continue (showValue value) newScope
         continue msg scope = do

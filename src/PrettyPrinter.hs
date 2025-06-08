@@ -8,12 +8,16 @@ showValue (Number n) = show n
 showValue (Decimal d) = show d
 showValue (Boolean b) = show b
 showValue (Quote exprs) = "'(" ++ unwords (map showExpression exprs) ++ ")"
+showValue Void = "#printed void, should not happen"
 
 showExpression :: Expression -> String
 showExpression (Constant v) = showValue v
 showExpression (Variable name) = name
 showExpression (Call name args) = "(" ++ name ++ " " ++ unwords (map showExpression args) ++ ")"
 showExpression (Apply op args) = "(" ++ showOperator op ++ " " ++ unwords (map showExpression args) ++ ")"
+showExpression (If cond case1 case2) = "(if " ++ showExpression cond ++ showExpression case1 ++ showExpression case2 ++ ")"
+showExpression (Cond branches) = "(cond (" ++ concatMap showBranch branches ++ "))"
+    where showBranch (x, y) = "(" ++ showExpression x ++ showExpression y ++ ")"
 
 showOperator :: Operator -> String
 showOperator Plus = "+"

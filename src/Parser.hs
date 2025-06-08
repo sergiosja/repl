@@ -17,7 +17,7 @@ lexer = Token.makeTokenParser emptyDef {
         ],
     Token.reservedNames =
         [ "and", "or", "not", "define"
-        , "if", "#t", "#f" ],
+        , "if", "cond", "#t", "#f" ],
     Token.commentStart = "#|",
     Token.commentEnd = "|#",
     Token.commentLine = ";",
@@ -105,6 +105,7 @@ parseProcedureDeclaration = parens $
 parseExpression :: Parser Expression
 parseExpression = wrapWS $ choice
     [ try parseIf
+    , try parseCond
     , try parseApply
     , try parseCall
     , try parseVariable
@@ -118,6 +119,12 @@ parseExpressions =
 parseIf :: Parser Expression
 parseIf = parens $
     If <$> (reserved "if" *> parseExpression) <*> parseExpression <*> parseExpression
+
+parseCond :: Parser Expression
+parseCond = parens $
+    Cond <$> (reserved "cond" *> parens (many1 condPair))
+    where
+        condPair = parens $ (,) <$> parseExpression <*> parseExpression
 
 parseApply :: Parser Expression
 parseApply = parens $

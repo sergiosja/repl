@@ -84,7 +84,7 @@ Expression (Variable "x")
 Statement (VariableDeclaration "x" (Number 1))
 ```
 
-also, (I presonally believe) keeping track of parentheses in the outermost scope is meaningless in a LISP language. Therefore you can do
+also I'm bad at keeping track of parentheses so in my perfect little world I'll allow as many as the eye can see
 
 ```haskell
 ь > (cond ((#f 1) (#f 2) (#t 3)))))))

@@ -10,7 +10,7 @@ import qualified Text.Parsec.Token as Token
 lexer :: Token.TokenParser ()
 lexer = Token.makeTokenParser emptyDef {
     Token.identStart = letter,
-    Token.identLetter = alphaNum,
+    Token.identLetter = alphaNum <|> char '?' <|> char '-' <|> char '\'',
     Token.reservedOpNames =
         [ "(", ")", "+", "-", "*", "/"
         , "<", ">", "==", "/=", ">=", "<="

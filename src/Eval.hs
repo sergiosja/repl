@@ -96,13 +96,13 @@ evalExpression (Cond branches) =
 
 evalProcedure :: Expression -> REPL (Either String Value)
 evalProcedure (Call "null?" lst) = do
-  if length lst /= 1 then return $ Left "null? error: Tried to apply null? to not exactly 1 argument (a list)"
+  if length lst /= 1 then return $ Left "'null?' error: Tried to apply 'null?' to not exactly 1 argument (a list)"
   else do
     maybeQuote <- evalExpression (safeHead lst)
     case maybeQuote of
       Right (Quote q) -> return . Right . Boolean . null $ q
+      Right _ -> return . Right . Boolean $ False
       Left err -> return $ Left err
-      _ -> return $ Left "null? error: Tried to apply null? to a non-list"
 
 evalProcedure (Call "not" cond) = do
   if length cond /= 1 then return $ Left "'not' error: Tried to apply 'not' to not exactly 1 argument (a conditional)"
@@ -112,8 +112,26 @@ evalProcedure (Call "not" cond) = do
       Left err -> return $ Left err
       Right value -> return . Right . Boolean . not . truthy $ value
 
+evalProcedure (Call "length" lst) = do
+  if length lst /= 1 then return $ Left "'length' error: Tried to apply 'length' to not exactly 1 argument (a list)"
+  else do
+    maybeQuote <- evalExpression (safeHead lst)
+    case maybeQuote of
+      Right (Quote q) -> return . Right . Number . length $ q
+      Left err -> return $ Left err
+      _ -> return $ Left "'length' error: Tried to apply 'length' to a non-list"
+
+evalProcedure (Call "reverse" lst) = do
+  if length lst /= 1 then return $ Left "'reverse' error: Tried to apply 'reverse' to not exactly 1 argument (a list)"
+  else do
+    maybeQuote <- evalExpression (safeHead lst)
+    case maybeQuote of
+      Right (Quote q) -> return . Right . Quote . reverse $ q
+      Left err -> return $ Left err
+      _ -> return $ Left "'reverse' error: Tried to apply 'reverse' to a non-list"
+
 evalProcedure (Call "car" lst) = do
-  if length lst /= 1 then return $ Left "car error: Tried to apply car to not exactly 1 argument (a list)"
+  if length lst /= 1 then return $ Left "'car' error: Tried to apply 'car' to not exactly 1 argument (a list)"
   else do
     maybeQuote <- evalExpression (safeHead lst)
     case maybeQuote of
@@ -122,19 +140,19 @@ evalProcedure (Call "car" lst) = do
         case evaluatedCar of
           Left err -> return $ Left err
           Right value -> return . Right $ value
-      Right (Quote []) -> return $ Left "car error: Tried to apply car to an empty list"
+      Right (Quote []) -> return $ Left "'car' error: Tried to apply 'car' to an empty list"
       Left err -> return $ Left err
-      _ -> return $ Left "car error: Tried to apply car to a non-list"
+      _ -> return $ Left "'car' error: Tried to apply 'car' to a non-list"
 
 evalProcedure (Call "cdr" lst) = do
-  if length lst /= 1 then return $ Left "cdr error: Tried to apply cdr to not exactly 1 argument (a list)"
+  if length lst /= 1 then return $ Left "'cdr' error: Tried to apply 'cdr' to not exactly 1 argument (a list)"
   else do
     maybeQuote <- evalExpression (safeHead lst)
     case maybeQuote of
       Right (Quote (_:cdr)) -> return . Right $ Quote cdr
-      Right (Quote []) -> return $ Left "cdr error: Tried to apply cdr to an empty list"
+      Right (Quote []) -> return $ Left "'cdr' error: Tried to apply 'cdr' to an empty list"
       Left err -> return $ Left err
-      _ -> return $ Left "cdr error: Tried to apply cdr to a non-list"
+      _ -> return $ Left "'cdr' error: Tried to apply 'cdr' to a non-list"
 
 evalProcedure (Call name args) = do
   maybeProc <- searchScopes name

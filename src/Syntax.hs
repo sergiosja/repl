@@ -7,7 +7,7 @@ data Program = Expression Expression | Statement Statement
 
 data Value =
     Text String
-  | Number Integer
+  | Number Int
   | Decimal Double
   | Boolean Bool
   | Quote [Expression]

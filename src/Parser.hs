@@ -69,7 +69,7 @@ parseDecimal :: Parser Value
 parseDecimal = Decimal <$> decimal
 
 parseNumber :: Parser Value
-parseNumber = Number <$> integer
+parseNumber = Number . fromIntegral <$> integer
 
 parseBoolean :: Parser Value
 parseBoolean =

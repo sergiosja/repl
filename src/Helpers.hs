@@ -41,7 +41,7 @@ extractText :: Value -> String
 extractText (Text s) = s
 extractText _ = error "Called `extractText` on a non-text value"
 
-extractNumber :: Value -> Integer
+extractNumber :: Value -> Int
 extractNumber (Number n) = n
 extractNumber _ = error "Called `extractNumber` on a non-number value"
 
@@ -59,7 +59,7 @@ extractTexts values =
     then Right $ map extractText values
     else Left "Called `extractTexts` on a non-text value"
 
-extractNumbers :: [Value] -> Either String [Integer]
+extractNumbers :: [Value] -> Either String [Int]
 extractNumbers values =
     if all isNumber values
     then Right $ map extractNumber values
@@ -78,7 +78,7 @@ extractBooleans values =
     else Left "Called `extractBooleans` on a non-boolean value"
 
 
-foldNumbers :: (Integer -> Integer -> Integer) -> [Value] -> Either String Value
+foldNumbers :: (Int -> Int -> Int) -> [Value] -> Either String Value
 foldNumbers f values = fmap (Number . foldl1 f) (extractNumbers values)
 
 foldDecimals :: (Double -> Double -> Double) -> [Value] -> Either String Value

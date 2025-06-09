@@ -13,11 +13,11 @@ lexer = Token.makeTokenParser emptyDef {
     Token.identLetter = alphaNum <|> char '?' <|> char '-' <|> char '\'',
     Token.reservedOpNames =
         [ "(", ")", "+", "-", "*", "/"
-        , "<", ">", "==", "/=", ">=", "<="
+        , "<", ">", "=", ">=", "<="
         ],
     Token.reservedNames =
-        [ "and", "or", "not", "define"
-        , "if", "cond", "#t", "#f" ],
+        [ "and", "or", "define", "if"
+        , "cond", "#t", "#f" ],
     Token.commentStart = "#|",
     Token.commentEnd = "|#",
     Token.commentLine = ";",
@@ -154,8 +154,7 @@ parseOperator = wrapWS $ choice
     , try $ reservedOp ">" $> GreaterThan
     , try $ reservedOp "<=" $> LessThanEqual
     , try $ reservedOp ">=" $> GreaterThanEqual
-    , try $ reservedOp "==" $> Equal
-    , try $ reservedOp "/=" $> NotEqual
+    , try $ reservedOp "=" $> Equal
     , try $ reservedOp "and" $> And
     , reservedOp "or" $> Or
     ]

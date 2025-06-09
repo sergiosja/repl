@@ -98,16 +98,24 @@ evalProcedure :: Expression -> REPL (Either String Value)
 evalProcedure (Call "null?" lst) = do
   if length lst /= 1 then return $ Left "null? error: Tried to apply null? to not exactly 1 argument (a list)"
   else do
-    maybeQuote <- evalExpression (head lst)
+    maybeQuote <- evalExpression (safeHead lst)
     case maybeQuote of
       Right (Quote q) -> return . Right . Boolean . null $ q
       Left err -> return $ Left err
       _ -> return $ Left "null? error: Tried to apply null? to a non-list"
 
+evalProcedure (Call "not" cond) = do
+  if length cond /= 1 then return $ Left "'not' error: Tried to apply 'not' to not exactly 1 argument (a conditional)"
+  else do
+    maybeCond <- evalExpression (safeHead cond)
+    case maybeCond of
+      Left err -> return $ Left err
+      Right value -> return . Right . Boolean . not . truthy $ value
+
 evalProcedure (Call "car" lst) = do
   if length lst /= 1 then return $ Left "car error: Tried to apply car to not exactly 1 argument (a list)"
   else do
-    maybeQuote <- evalExpression (head lst)
+    maybeQuote <- evalExpression (safeHead lst)
     case maybeQuote of
       Right (Quote (car:_)) -> do
         evaluatedCar <- evalExpression car
@@ -121,7 +129,7 @@ evalProcedure (Call "car" lst) = do
 evalProcedure (Call "cdr" lst) = do
   if length lst /= 1 then return $ Left "cdr error: Tried to apply cdr to not exactly 1 argument (a list)"
   else do
-    maybeQuote <- evalExpression (head lst)
+    maybeQuote <- evalExpression (safeHead lst)
     case maybeQuote of
       Right (Quote (_:cdr)) -> return . Right $ Quote cdr
       Right (Quote []) -> return $ Left "cdr error: Tried to apply cdr to an empty list"
@@ -148,7 +156,7 @@ evalProcedure (Call name args) = do
       searchScopes name' = do
         Scope { procedures = env } <- get
         return $ Map.lookup name' env
-evalProcedure _ = return $ Left "Eval error: Tried to evaluate non-procedure as procedure"
+evalProcedure _ = return $ Left "Tried to evaluate non-procedure as procedure"
 
 
 -- Operator
@@ -163,7 +171,6 @@ foldExpression LessThanEqual values = foldComparison (<=) values
 foldExpression GreaterThan values = foldComparison (>) values
 foldExpression GreaterThanEqual values = foldComparison (>=) values
 foldExpression Equal values = foldComparison (==) values
-foldExpression NotEqual values = foldComparison (/=) values
 -- foldExpression And values = foldComparison (&&) values
 -- foldExpression Or values = foldComparison (||) values
 foldExpression _ _ = Left "Unsupported operator"

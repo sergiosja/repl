@@ -6,7 +6,8 @@ showValue :: Value -> String
 showValue (Text s) = s
 showValue (Number n) = show n
 showValue (Decimal d) = show d
-showValue (Boolean b) = show b
+showValue (Boolean True) = "#t"
+showValue (Boolean False) = "#f"
 showValue (Quote exprs) = "'(" ++ unwords (map showExpression exprs) ++ ")"
 showValue Void = "#<void:>"
 
@@ -28,7 +29,6 @@ showOperator LessThan = "<"
 showOperator LessThanEqual = "<="
 showOperator GreaterThan = ">"
 showOperator GreaterThanEqual = ">="
-showOperator Equal = "=="
-showOperator NotEqual = "/="
+showOperator Equal = "="
 showOperator And = "and"
 showOperator Or = "or"

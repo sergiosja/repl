@@ -38,7 +38,6 @@ data Operator =
   | GreaterThan
   | GreaterThanEqual
   | Equal
-  | NotEqual
   | And
   | Or
   deriving (Show, Eq, Read, Ord)

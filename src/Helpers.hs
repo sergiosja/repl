@@ -16,6 +16,7 @@ module Helpers
     , foldTexts
     , foldBooleans
     , truthy
+    , safeHead
 ) where
 
 import Syntax
@@ -92,3 +93,7 @@ foldBooleans f values = fmap (Boolean . foldl1 f) (extractBooleans values)
 truthy :: Value -> Bool
 truthy (Boolean False) = False
 truthy _ = True
+
+safeHead :: [a] -> a
+safeHead (x:_) = x
+safeHead _ = error "No head for you mister."

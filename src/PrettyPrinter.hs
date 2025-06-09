@@ -8,7 +8,7 @@ showValue (Number n) = show n
 showValue (Decimal d) = show d
 showValue (Boolean b) = show b
 showValue (Quote exprs) = "'(" ++ unwords (map showExpression exprs) ++ ")"
-showValue Void = "#printed void, should not happen"
+showValue Void = "#<void:>"
 
 showExpression :: Expression -> String
 showExpression (Constant v) = showValue v

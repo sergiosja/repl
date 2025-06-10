@@ -5,15 +5,6 @@ module Syntax (module Syntax) where
 data Program = Expression Expression | Statement Statement
   deriving (Show, Eq, Read, Ord)
 
-data Value =
-    Text String
-  | Number Int
-  | Decimal Double
-  | Boolean Bool
-  | Quote [Expression]
-  | Void
-  deriving (Show, Eq, Read, Ord)
-
 data Statement =
     VariableDeclaration String Expression
   | ProcedureDeclaration String [String] Expression
@@ -26,6 +17,15 @@ data Expression =
   | Cond [(Expression, Expression)]
   | Apply Operator [Expression]
   | Call String [Expression]
+  deriving (Show, Eq, Read, Ord)
+
+data Value =
+    Text String
+  | Number Int
+  | Decimal Double
+  | Boolean Bool
+  | Quote [Expression]
+  | Void
   deriving (Show, Eq, Read, Ord)
 
 data Operator =

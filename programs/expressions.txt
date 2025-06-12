@@ -1,0 +1,35 @@
+"repl"
+
+1
+
+6.9
+
+#t
+
+#f
+
+'("repl" 1 6.9 #t #f '())
+
+-- these will throw an error if you don't run the lines in `statements.txt` first
+
+x ; 100
+
+(if (> x 1) "higher" "lower") ; 
+
+(cond ((> x 1) "higher") ((< x 1) "lower") (else "eq"))
+
+(+ 1 2) ; 3
+
+(null? '()) ; #t
+
+(not (null? '())) ; #f
+
+(length '(1 2 2 3 9)) ; 5
+
+(reverse '(1 2 3 4 5)) ; '(5 4 3 2 1)
+
+(car '(1 2 3 4 5)) ; 1
+
+(cdr '(1 2 3 4 5)) ; '(2 3 4 5)
+
+(f 10 10) ; 100

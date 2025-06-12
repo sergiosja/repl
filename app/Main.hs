@@ -7,7 +7,6 @@ import Text.Parsec
 
 import PrettyPrinter (showValue)
 import Parser (parseProgram)
--- import Helpers (isBalanced)
 import Eval (Scope(..), run)
 import Syntax
 

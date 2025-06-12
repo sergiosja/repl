@@ -122,7 +122,7 @@ parseIf = parens $
 
 parseCond :: Parser Expression
 parseCond = parens $
-    Cond <$> (reserved "cond" *> parens (many1 condPair))
+    Cond <$> (reserved "cond" *> many1 condPair)
     where
         condPair = parens $ (,) <$> parseExpression <*> parseExpression
 

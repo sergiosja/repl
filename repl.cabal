@@ -27,7 +27,6 @@ library
   exposed-modules:
       Eval
       Helpers
-      Lib
       Parser
       PrettyPrinter
       Syntax

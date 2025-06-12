@@ -6,25 +6,18 @@ I just really wanted to make a repl. Hopefully I'll find a nice name for it late
 
 ### What can it do?
 
-It's loosely based on [R5RS: Legacy Scheme](https://docs.racket-lang.org/r5rs/index.html), the programming language with the objectively prettiest syntax.
+It's loosely based on [R5RS: Legacy Scheme](https://docs.racket-lang.org/r5rs/index.html), the programming language with the prettiest syntax, objectively.
 
-We can execute values like numbers and quotes
+Here are some expressions:
 
-```haskell
+```hs
 repl, version 0.0.1
 
 ь > 1
 1
 
-ь > '(2 3 1 2 9 9)
-'(2 3 1 2 9 9)
-```
-
-and expressions
-
-```haskell
-ь > (+ 2 3 1 2 9 9)
-26
+ь > '(1 2)
+'(1 2)
 
 ь > (+ 2 3 (* 1 (- 2 9) 9))
 -58
@@ -34,7 +27,7 @@ Oh yeah, we use [polish notation](https://dl.acm.org/doi/pdf/10.5555/1074100.107
 
 ### Is that it?
 
-Far from it. We can define variables for later use
+Far from it. Here are some statements
 
 ```haskell
 ь > (define currentYear 2025) -- I know ie the DrRacket repl doesn't return this. Sue me!
@@ -45,18 +38,9 @@ Far from it. We can define variables for later use
 
 ь > (- currentYear lastYear)
 1
-```
 
-Did you see that? Comments are supported too, of course 😎
-
-If your imagination allows for it, you can also make your own procedures
-
-```haskell
 ь > (define (plus x y) (+ x y))
 #<procedure:plus>
-
-ь > (plus 10 10)
-20
 
 ь > (define (plus1 x) (plus x 1))
 #<procedure:plus1>
@@ -124,17 +108,13 @@ Don't worry, you can actually leave whenever you want, you just have to say good
 ```haskell
 repl, version 0.0.1
 
-ь > "exit"
-exit
+ь > exit()
+Eval error: "Variable not found: exit"
 
-ь > ":quit"
-:quit
-
-ь > ":wq"
-:wq
-
-ь > "leave"
-leave
+ь > :quit
+Parse error: (line 1, column 1):
+unexpected ":"
+expecting "(", identifier, literal string, float, integer, "#t", "#f" or "'"
 
 ь > ciao
 Arrivederci caro 👋

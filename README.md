@@ -68,6 +68,16 @@ Expression (Variable "x")
 Statement (VariableDeclaration "x" (Number 1))
 ```
 
+R5RS Scheme does not allow cadr nesting beyond 4 levels. However, I do
+
+```haskell
+ь > (define lst '(1 2 3 4 5 6 7 8 9 10 11))
+#<val:lst>
+
+ь > (cadddddr lst)
+6
+```
+
 also I'm bad at keeping track of parentheses so in my perfect little world I'll allow as many as the eye can see
 
 ```haskell

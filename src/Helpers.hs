@@ -17,6 +17,7 @@ module Helpers
     , foldBooleans
     , truthy
     , safeHead
+    , isCadr
 ) where
 
 import Syntax
@@ -97,3 +98,11 @@ truthy _ = True
 safeHead :: [a] -> a
 safeHead (x:_) = x
 safeHead _ = error "No head for you mister."
+
+isCadr :: String -> Bool
+isCadr s = head s == 'c' && last s == 'r' && isCadr' (drop 1 $ init s)
+    where
+        isCadr' "" = True
+        isCadr' ('a':xs) = isCadr' xs
+        isCadr' ('d':xs) = isCadr' xs
+        isCadr' _ = False

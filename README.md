@@ -68,7 +68,7 @@ Expression (Variable "x")
 Statement (VariableDeclaration "x" (Number 1))
 ```
 
-R5RS Scheme does not allow cadr nesting beyond 4 levels. However, I do
+R5RS Scheme does not allow cadr nesting beyond 4 levels, but don't worry, I do
 
 ```haskell
 ь > (define lst '(1 2 3 4 5 6 7 8 9 10 11))
